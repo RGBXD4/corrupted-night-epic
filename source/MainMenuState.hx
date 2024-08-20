@@ -222,64 +222,6 @@ class MainMenuState extends MusicBeatState
 		var lerpVal:Float = CoolUtil.boundTo(elapsed * 7.5, 0, 1);
 		camFollowPos.setPosition(FlxMath.lerp(camFollowPos.x, camFollow.x, lerpVal), FlxMath.lerp(camFollowPos.y, camFollow.y, lerpVal));
 
-		if (eee)
-		{
-			var finalKey:FlxKey = FlxG.keys.firstJustPressed();
-			if(finalKey != FlxKey.NONE) {
-				lkp.push(finalKey); //Convert int to FlxKey
-				if(lkp.length > tesla.length || lkp.length > sega.length)
-				{
-					lkp.shift();
-				}
-				
-				if(lkp.length == tesla.length)
-				{
-					var isDifferent:Bool = false;
-					for (i in 0...lkp.length) {
-						if(lkp[i] != tesla[i]) {
-							isDifferent = true;
-							break;
-						}
-					}
-
-					if(!isDifferent)
-					{
-						FlxG.sound.pause();
-						selectedSomethin = true;
-						bfGlitch.visible = false;
-						(new FlxVideo(Paths.video('aquiestatuviejainutilmiracomomelacachoooooh'))).finishCallback = function() {
-							isDifferent = true;
-							selectedSomethin = false;
-							FlxG.sound.resume();
-							bfGlitch.visible = true;
-						}
-					}
-				}
-				else if(lkp.length == sega.length)
-				{
-					var isDifferent:Bool = false;
-					for (i in 0...lkp.length) {
-						if(lkp[i] != sega[i]) {
-							isDifferent = true;
-							break;
-						}
-					}
-
-					if(!isDifferent)
-					{
-						FlxG.sound.pause();
-						selectedSomethin = true;
-						bfGlitch.visible = false;
-						(new FlxVideo(Paths.video('mcsonic'))).finishCallback = function() {
-							isDifferent = true;
-							selectedSomethin = false;
-							FlxG.sound.resume();
-							bfGlitch.visible = true;
-						}
-					}
-				}
-			}
-		}
 		
 		if (!selectedSomethin)
 		{
