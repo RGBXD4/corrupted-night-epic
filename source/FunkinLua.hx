@@ -1617,8 +1617,9 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, "clearEffects", function(camera:String) {
 			PlayState.instance.clearShaderFromCamera(camera);
 		});
+					#if desktop
 		Discord.DiscordClient.addLuaCallbacks(lua);
-
+#end
 		call('onCreate', []);
 		#end
 	}
