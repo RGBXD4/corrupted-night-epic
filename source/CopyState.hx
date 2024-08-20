@@ -1,4 +1,4 @@
-package android.stateorbackend;
+package;
 
 #if android
 import TitleState;
@@ -12,7 +12,6 @@ import openfl.utils.Assets as OpenflAssets;
 import flixel.addons.util.FlxAsyncLoop;
 import openfl.utils.ByteArray;
 import haxe.io.Path;
-import android.stateorbackend.SUtil;
 #if (target.threaded)
 import sys.thread.Thread;
 #end
@@ -39,6 +38,7 @@ class CopyState extends MusicBeatState
 	var shouldCopy:Bool = false;
 
 	static final textFilesExtensions:Array<String> = ['ini', 'txt', 'xml', 'hxs', 'hx', 'lua', 'json', 'frag', 'vert'];
+	
 
 	override function create()
 	{
@@ -48,7 +48,7 @@ class CopyState extends MusicBeatState
 		if (maxLoopTimes > 0)
 		{
 			shouldCopy = true;
-			#if !ios openfl.Lib.application.window.alert#else SUtil.showPopUp#end("Seems like you have some missing files that are necessary to run the game\nPress OK to begin the copy process", "Notice!");
+		    openfl.Lib.application.window.alert("Seems like you have some missing files that are necessary to run the game\nPress OK to begin the copy process", "Notice!");
 
 			add(new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, 0xffcaff4d));
 
@@ -66,8 +66,8 @@ class CopyState extends MusicBeatState
 			loadedText.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, CENTER);
 			add(loadedText);
 
-			#if (target.threaded)
-			Thread.createWithEventLoop(() -> {
+            #if (target.threaded)
+			Thread.create(() -> {
 			#end
 				var ticks:Int = 15;
 				if (maxLoopTimes <= 15)
@@ -95,7 +95,7 @@ class CopyState extends MusicBeatState
 			{
 				if (failedFiles.length > 0)
 				{
-					SUtil.showPopUp(failedFiles.join('\n'), 'Failed To Copy ${failedFiles.length} File.');
+					lime.app.Application.current.window.alert(failedFiles.join('\n'), 'Failed To Copy ${failedFiles.length} File.');
 					if (!FileSystem.exists('logs'))
 						FileSystem.createDirectory('logs');
 					File.saveContent('logs/' + Date.now().toString().replace(' ', '-').replace(':', "'") + '-CopyState' + '.txt', failedFiles.join('\n'));
@@ -112,6 +112,35 @@ class CopyState extends MusicBeatState
 		}
 		super.update(elapsed);
 	}
+	
+	public static function mkDirs(directory:String):Void
+	{
+		var total:String = '';
+		if (directory.substr(0, 1) == '/')
+			total = '/';
+
+		var parts:Array<String> = directory.split('/');
+		if (parts.length > 0 && parts[0].indexOf(':') > -1)
+			parts.shift();
+
+		for (part in parts)
+		{
+			if (part != '.' && part != '')
+			{
+				if (total != '' && total != '/')
+					total += '/';
+
+				total += part;
+
+				try {
+				if (!FileSystem.exists(total))
+					FileSystem.createDirectory(total);
+				}
+				catch (e:haxe.Exception)
+					trace('Error while creating folder. (${e.message}');
+			}
+		}
+	}
 
 	public function copyAsset()
 	{
@@ -122,7 +151,7 @@ class CopyState extends MusicBeatState
 		{
 			var directory = Path.directory(toFile);
 			if (!FileSystem.exists(directory))
-				SUtil.mkDirs(directory);
+				mkDirs(directory);
 			try
 			{
 				if (OpenflAssets.exists(getFile(file)))
@@ -175,7 +204,7 @@ class CopyState extends MusicBeatState
 			if (fileData == null)
 				fileData = '';
 			if (!FileSystem.exists(directory))
-				SUtil.mkDirs(directory);
+				mkDirs(directory);
 			File.saveContent(Path.join([directory, fileName]), fileData);
 		}
 		catch (error:Dynamic)
