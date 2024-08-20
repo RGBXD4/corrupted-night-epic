@@ -13,6 +13,7 @@ import android.content.Context;
 import android.os.Build;
 #end
 import CopyState;
+import haxe.io.Path;
 	
 class Main extends Sprite
 {
