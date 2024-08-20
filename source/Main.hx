@@ -8,12 +8,17 @@ import openfl.Lib;
 import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
-
+#if android
+import android.content.Context;
+import android.os.Build;
+#end
+import CopyState;
+	
 class Main extends Sprite
 {
 	var gameWidth:Int = 1280; // Width of the game in pixels (might be less / more in actual pixels depending on your zoom).
 	var gameHeight:Int = 720; // Height of the game in pixels (might be less / more in actual pixels depending on your zoom).
-	var initialState:Class<FlxState> = TitleState; // The FlxState the game starts with.
+	var initialState:Class<FlxState> = CopyState; // The FlxState the game starts with.
 	var zoom:Float = -1; // If -1, zoom is automatically calculated to fit the window dimensions.
 	var framerate:Int = 60; // How many frames per second the game should run at.
 	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
@@ -31,6 +36,13 @@ class Main extends Sprite
 	public function new()
 	{
 		super();
+
+		#if android
+		if (VERSION.SDK_INT > 30)
+			Sys.setCwd(Path.addTrailingSlash(Context.getObbDir()));
+		else
+			Sys.setCwd(Path.addTrailingSlash(Context.getExternalFilesDir()));
+                #end
 
 		if (stage != null)
 		{
@@ -54,32 +66,15 @@ class Main extends Sprite
 
 	private function setupGame():Void
 	{
-		var stageWidth:Int = Lib.current.stage.stageWidth;
-		var stageHeight:Int = Lib.current.stage.stageHeight;
-
-		if (zoom == -1)
-		{
-			var ratioX:Float = stageWidth / gameWidth;
-			var ratioY:Float = stageHeight / gameHeight;
-			zoom = Math.min(ratioX, ratioY);
-			gameWidth = Math.ceil(stageWidth / zoom);
-			gameHeight = Math.ceil(stageHeight / zoom);
-		}
-
-		#if !debug
-		initialState = TitleState;
-		#end
 
 		ClientPrefs.loadDefaultKeys();
-		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
+		addChild(new FlxGame(gameWidth, gameHeight, initialState, framerate, framerate, skipSplash, startFullscreen));
 
-		#if !mobile
 		fpsVar = new FPS(10, 3, 0xFFFFFF);
 		addChild(fpsVar);
 		if(fpsVar != null) {
 			fpsVar.visible = ClientPrefs.showFPS;
 		}
-		#end
 
 		#if html5
 		FlxG.autoPause = false;
