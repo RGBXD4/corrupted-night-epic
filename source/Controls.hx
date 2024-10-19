@@ -468,8 +468,6 @@ class Controls extends FlxActionSet
 			case NONE:
 		}
 	}
-}
-	
 
 	public function removeFlxInput(Tinputs) {
 		for (action in this.digitalActions)
