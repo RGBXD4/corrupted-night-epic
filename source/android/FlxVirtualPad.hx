@@ -114,7 +114,7 @@ class FlxVirtualPad extends FlxSpriteGroup {
 	}
 
 	public static function getFrames():FlxAtlasFrames {
-		return Paths.getPackerAtlas('androidc/virtualpad');
+		return Paths.getPackerAtlas('ui/virtualpad');
 	}
 
 	override public function destroy():Void {
