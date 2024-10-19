@@ -1266,6 +1266,11 @@ class PlayState extends MusicBeatState
 		{
 			windowOrigin = new FlxPoint(x, y);
 		});
+
+	        #if android
+		addAndroidControls();
+		androidc.visible = true;
+		#end
 		
 		super.create();
 	}
